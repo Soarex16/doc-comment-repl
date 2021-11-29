@@ -8,13 +8,6 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
 
-    <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyProjectService"/>
-
-        <runLineMarkerContributor language="kotlin" implementationClass="com.github.soarex16.doccommentrepl.RunCodeInCommentMarkerContributor" />
-    </extensions>
-
     <actions>
         <action id="com.github.soarex16.doccommentrepl.TestAction" class="com.github.soarex16.doccommentrepl.TestAction"
                 text="Run DOC REPL" description="Test action">
