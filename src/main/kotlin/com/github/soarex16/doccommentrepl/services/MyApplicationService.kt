@@ -1,10 +1,10 @@
 package com.github.soarex16.doccommentrepl.services
 
-import com.github.soarex16.doccommentrepl.MyBundle
+import com.github.soarex16.doccommentrepl.DocCommentReplBundle
 
 class MyApplicationService {
 
     init {
-        println(MyBundle.message("applicationService"))
+        println(DocCommentReplBundle.message("applicationService"))
     }
 }
