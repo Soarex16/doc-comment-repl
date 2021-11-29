@@ -11,12 +11,10 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyProjectService"/>
+
+        <runLineMarkerContributor language="kotlin" implementationClass="com.github.soarex16.doccommentrepl.RunCodeInCommentMarkerContributor" />
     </extensions>
 
-    <applicationListeners>
-        <listener class="com.github.soarex16.doccommentrepl.listeners.MyProjectManagerListener"
-                  topic="com.intellij.openapi.project.ProjectManagerListener"/>
-    </applicationListeners>
     <actions>
         <action id="com.github.soarex16.doccommentrepl.TestAction" class="com.github.soarex16.doccommentrepl.TestAction"
                 text="Run DOC REPL" description="Test action">

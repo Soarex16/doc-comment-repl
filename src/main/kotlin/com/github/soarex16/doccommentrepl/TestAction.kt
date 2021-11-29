@@ -10,6 +10,15 @@ import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 import org.jetbrains.kotlin.console.actions.errorNotification
 
+/**
+ * >>> 1 + 2
+ * res0: kotlin.Int = 3
+ *
+ * some text
+ *
+ * >>> "aBc".toUpperCase()
+ * res1: kotlin.String = ABC
+ */
 class TestAction : AnAction() {
     override fun actionPerformed(event: AnActionEvent) {
         val project = event.project
@@ -26,6 +35,8 @@ class TestAction : AnAction() {
         ProjectTaskManager.getInstance(project).build(module).onSuccess {
             if (!module.isDisposed) {
                 KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = it.hasErrors())
+
+                //KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile()
             }
         }
 
