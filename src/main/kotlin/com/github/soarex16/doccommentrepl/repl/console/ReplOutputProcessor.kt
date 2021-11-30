@@ -16,6 +16,7 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
+import com.github.soarex16.doccommentrepl.DocCommentReplBundle
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.execution.console.LanguageConsoleImpl
@@ -35,6 +36,7 @@ import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleErrorRender
 import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
 import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
 import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
+import org.jetbrains.kotlin.console.actions.errorNotification
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.math.max
 
@@ -100,7 +102,15 @@ class ReplOutputProcessor(
 
     fun printResultWithGutterIcon(result: String) = WriteCommandAction.runWriteCommandAction(project) {
         WriteCommandAction.runWriteCommandAction(project) {
-            runner.activeDocument?.insertString(runner.offset, "$\nresult\n")
+            val actualCallElement = runner.callElementRef?.element
+
+            if (actualCallElement == null) {
+                errorNotification(project, DocCommentReplBundle.message("doccodecomment.error.document.modified"))
+                return@runWriteCommandAction
+            }
+
+            val commentString = result.lines().joinToString { "\n//$it" }
+            runner.activeDocument?.insertString(actualCallElement.textRange.endOffset, commentString)
         }
 
         printOutput(result, ConsoleViewContentType.NORMAL_OUTPUT, ReplIcons.RESULT)

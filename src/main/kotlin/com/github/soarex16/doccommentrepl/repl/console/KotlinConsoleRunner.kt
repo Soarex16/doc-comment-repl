@@ -45,6 +45,8 @@ import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRe
 import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
 import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
 import com.intellij.openapi.editor.Document
+import com.intellij.psi.PsiElement
+import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
@@ -84,6 +86,7 @@ class KotlinConsoleRunner(
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
 
     var activeDocument: Document? = null
+    var callElementRef: SmartPsiElementPointer<PsiElement>? = null
     var offset: Int = 0
     private val replState = ReplState()
     private val consoleTerminated = CountDownLatch(1)

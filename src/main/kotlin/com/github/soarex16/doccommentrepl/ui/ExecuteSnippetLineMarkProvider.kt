@@ -45,7 +45,7 @@ private class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElem
 
             override fun isNavigateAction() = true
 
-            override fun getTooltipText() = "Execute snippet ${(snippet)}"
+            override fun getTooltipText() = "Execute snippet"
         }
     }
 }
