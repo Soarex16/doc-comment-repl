@@ -8,9 +8,16 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
 
+    <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider id="DocComment.SampleLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.ui.ExecuteSnippetLineMarkProvider"
+                                        language="kotlin"/>
+    </extensions>
+
     <actions>
-        <action id="com.github.soarex16.doccommentrepl.TestAction" class="com.github.soarex16.doccommentrepl.TestAction"
-                text="Run DOC REPL" description="Test action">
+        <action id="com.github.soarex16.doccommentrepl.ExecuteSnippetAction"
+                class="com.github.soarex16.doccommentrepl.ExecuteSnippetAction"
+                text="Run DOC REPL" description="Test action" icon="AllIcons.RunConfigurations.TestState.Run">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>
