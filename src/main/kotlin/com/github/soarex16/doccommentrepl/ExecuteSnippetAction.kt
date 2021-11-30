@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
 
-class SnippetResultHandler(val project: Project, val doc: Document, val element: PsiElement): ScratchOutputHandler {
+class SnippetResultHandler(val project: Project, val doc: Document, val elementRef: PsiElement) : ScratchOutputHandler {
     override fun clear(file: ScratchFile) {
 
     }
@@ -34,8 +34,14 @@ class SnippetResultHandler(val project: Project, val doc: Document, val element:
 
     override fun handle(file: ScratchFile, expression: ScratchExpression, output: ScratchOutput) {
         WriteCommandAction.runWriteCommandAction(project) {
+            val psiElement = elementRef
+            if (psiElement == null) {
+                errorNotification(project, DocCommentReplBundle.message("doccodecomment.error.document.modified"))
+                return@runWriteCommandAction
+            }
+
             val commentString = output.text.lines().joinToString { "\n//$it" }
-            doc.insertString(element.textRange.endOffset, commentString)
+            doc.insertString(psiElement.textRange.endOffset, commentString)
         }
     }
 
@@ -72,7 +78,7 @@ class ExecuteSnippetAction(val code: String, private val callElement: SmartPsiEl
 
         val vFile = PsiFileFactory
                 .getInstance(project)
-                .createFileFromText(psiElement.language, code)
+                .createFileFromText("snippet.kts", psiElement.language, code)
                 .virtualFile
 
         val scratch = KtScratchFileLanguageProvider().newScratchFile(project, vFile)

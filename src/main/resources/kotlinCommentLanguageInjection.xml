@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<component name="LanguageInjectionConfiguration">
+    <injection language="Kotlin" injector-id="kotlin">
+        <display-name>Kotlin comments (DocCommentREPL)</display-name>
+        <place><![CDATA[
+            psiComment()
+                .withText(">>>")
+        ]]></place>
+    </injection>
+</component>

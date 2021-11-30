@@ -8,11 +8,18 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>com.intellij.java</depends>
+    <depends optional="true" config-file="kotlin-injections.xml">
+        org.intellij.intelliLang
+    </depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.lineMarkerProvider id="DocComment.SampleLineMarkProvider"
+        <codeInsight.lineMarkerProvider id="DocComment.ExecuteSnippetLineMarkProvider.Kotlin"
                                         implementationClass="com.github.soarex16.doccommentrepl.ui.ExecuteSnippetLineMarkProvider"
                                         language="kotlin"/>
+
+        <languageInjectionContributor id="DocComment.CommentLanguageInjection.Kotlin"
+                                      implementationClass="com.github.soarex16.doccommentrepl.ui.KotlinCommentLanguageInjection"
+                                      language="kotlin"/>
     </extensions>
 
     <actions>
