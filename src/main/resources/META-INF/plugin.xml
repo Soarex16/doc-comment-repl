@@ -7,15 +7,14 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.java</depends>
 
     <extensions defaultExtensionNs="com.intellij">
-        <applicationService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyApplicationService"/>
-        <projectService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyProjectService"/>
+        <codeInsight.lineMarkerProvider id="DocComment.SampleLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.ui.ExecuteSnippetLineMarkProvider"
+                                        language="kotlin"/>
         <projectService serviceInterface="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"
                         serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
-
-        <runLineMarkerContributor language="kotlin"
-                                  implementationClass="com.github.soarex16.doccommentrepl.RunCodeInCommentMarkerContributor"/>
 
     </extensions>
 
@@ -24,10 +23,10 @@
                                      implementation="com.github.soarex16.doccommentrepl.repl.console.ConsoleScriptDefinitionContributor"/>
 
     </extensions>
-
     <actions>
-        <action id="com.github.soarex16.doccommentrepl.TestAction" class="com.github.soarex16.doccommentrepl.TestAction"
-                text="Run DOC REPL" description="Test action">
+        <action id="com.github.soarex16.doccommentrepl.ExecuteSnippetAction"
+                class="com.github.soarex16.doccommentrepl.ExecuteSnippetAction"
+                text="Run DOC REPL" description="Test action" icon="AllIcons.RunConfigurations.TestState.Run">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>
