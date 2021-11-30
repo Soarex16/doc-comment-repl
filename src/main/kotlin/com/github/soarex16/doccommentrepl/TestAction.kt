@@ -6,9 +6,9 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.task.ProjectTaskManager
+import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper
+import com.github.soarex16.doccommentrepl.repl.console.actions.errorNotification
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
-import org.jetbrains.kotlin.console.KotlinConsoleKeeper
-import org.jetbrains.kotlin.console.actions.errorNotification
 
 /**
  * >>> 1 + 2
@@ -34,8 +34,8 @@ class TestAction : AnAction() {
 
         ProjectTaskManager.getInstance(project).build(module).onSuccess {
             if (!module.isDisposed) {
-                KotlinConsoleKeeper.getInstance(project).run(module, previousCompilationFailed = it.hasErrors())
-
+                val keeper = KotlinConsoleKeeper.getInstance(project)
+                keeper.run(module, previousCompilationFailed = it.hasErrors())
                 //KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile()
             }
         }

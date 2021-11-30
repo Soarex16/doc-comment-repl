@@ -11,8 +11,18 @@
     <extensions defaultExtensionNs="com.intellij">
         <applicationService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyApplicationService"/>
         <projectService serviceImplementation="com.github.soarex16.doccommentrepl.services.MyProjectService"/>
+        <projectService serviceInterface="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"
+                        serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
 
-        <runLineMarkerContributor language="kotlin" implementationClass="com.github.soarex16.doccommentrepl.RunCodeInCommentMarkerContributor" />
+        <runLineMarkerContributor language="kotlin"
+                                  implementationClass="com.github.soarex16.doccommentrepl.RunCodeInCommentMarkerContributor"/>
+
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
+                                     implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
+
     </extensions>
 
     <actions>
