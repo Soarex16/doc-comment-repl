@@ -16,6 +16,13 @@ import com.intellij.psi.util.elementType
 const val REPL_MARKER = ">>>"
 const val MULTILINE_MARKER = "..." // TODO: добавить возможность выполнения многострочного кода
 
+/**
+ * PsiElement(KDOC_TEXT) - строчка в kdoc
+ * PsiComment(EOL_COMMENT) - однострочный комментарий
+ * PsiComment(BLOCK_COMMENT) - многострочный комментарий
+ */
+val COMMENT_NODE_TYPES = setOf("KDOC_TEXT", "EOL_COMMENT", "BLOCK_COMMENT")
+
 private class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElement, val snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
         callElement,
         snippetTextRange,
@@ -33,28 +40,20 @@ private class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElem
             override fun getClickAction(): AnAction? {
                 if (callElementRef.element?.isWritable != true) return null
 
-                return ExecuteSnippetAction()
+                return ExecuteSnippetAction(snippet, callElementRef, snippetTextRange)
             }
 
             override fun isNavigateAction() = true
 
-            // TODO: remove after debug
-            override fun getTooltipText() = snippet
+            override fun getTooltipText() = "Execute snippet ${(snippet)}"
         }
     }
 }
 
 class ExecuteSnippetLineMarkProvider : LineMarkerProvider {
-    /**
-     * PsiElement(KDOC_TEXT) - строчка в kdoc
-     * PsiComment(EOL_COMMENT) - однострочный комментарий
-     * PsiComment(BLOCK_COMMENT) - многострочный комментарий
-     */
-    private val acceptableNodes = setOf("KDOC_TEXT", "EOL_COMMENT", "BLOCK_COMMENT")
-
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (element is PsiWhiteSpace) return null
-        if (element.elementType.toString() !in acceptableNodes) return null
+        if (element.elementType.toString() !in COMMENT_NODE_TYPES) return null
 
         val replMarkerOffset = element.text.indexOf(REPL_MARKER)
         if (replMarkerOffset == -1)
@@ -66,11 +65,11 @@ class ExecuteSnippetLineMarkProvider : LineMarkerProvider {
 
         val snippetRange = TextRange.from(
                 element.textRange.startOffset + rangeLeftBorder,
-                rangeRightBorder - replMarkerOffset
+                rangeRightBorder - rangeLeftBorder
         )
 
         val codeSnippet = element.text.substring(rangeLeftBorder, rangeRightBorder)
 
-        return ExecuteSnippetMarkerInfo("Your code: <b>${codeSnippet}</b>", element, snippetRange)
+        return ExecuteSnippetMarkerInfo(codeSnippet, element, snippetRange)
     }
 }
