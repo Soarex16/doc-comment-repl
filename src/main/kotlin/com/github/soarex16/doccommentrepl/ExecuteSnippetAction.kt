@@ -1,6 +1,9 @@
 package com.github.soarex16.doccommentrepl
 
+import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper
+import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
 import com.github.soarex16.doccommentrepl.ui.COMMENT_NODE_TYPES
+import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
@@ -13,8 +16,11 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.elementType
+import com.intellij.task.ProjectTaskManager
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
+import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 import org.jetbrains.kotlin.console.actions.errorNotification
+import org.jetbrains.kotlin.console.actions.logError
 import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
 import javax.script.ScriptEngineManager
@@ -56,8 +62,35 @@ class ExecuteSnippetAction(val code: String, private val callElement: SmartPsiEl
         WriteCommandAction.runWriteCommandAction(project) {
             activeDocument.insertString(psiElement.textRange.endOffset, "$commentString\n")
         }
+
+
+
+        // надо открыть какой-нибудь файл на котлине
+        // потом наверху в панели tools нажать на Run DOC REPL и запуститься консолька
+
+        ProjectTaskManager.getInstance(project).build(module).onSuccess {
+            if (!module.isDisposed) {
+                val keeper = KotlinConsoleKeeper.getInstance(project)
+                val runner = keeper.run(module, previousCompilationFailed = it.hasErrors())
+                sendCommandToProcess(code, runner)
+                //KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile()
+            }
+        }
         /*val commentElement = createComment(psiElement, executionResult)
 
         psiElement.parent.addAfter(commentElement, psiElement)*/
+    }
+
+    private fun sendCommandToProcess(command: String, runner: KotlinConsoleRunner) {
+        val processHandler = runner.processHandler
+        val processInputOS =
+            processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
+        val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
+
+        val xmlRes = command.replInputAsXml()
+
+        val bytes = ("$xmlRes\n").toByteArray(charset)
+        processInputOS.write(bytes)
+        processInputOS.flush()
     }
 }
