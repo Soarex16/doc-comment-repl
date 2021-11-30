@@ -1,19 +1,15 @@
 package com.github.soarex16.doccommentrepl
 
 import com.github.soarex16.doccommentrepl.ui.COMMENT_NODE_TYPES
-import com.intellij.ide.scratch.ScratchFileService
-import com.intellij.ide.scratch.ScratchRootType
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
 import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.editor.Document
-import com.intellij.openapi.editor.ex.util.EditorUtil
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.TextRange
-import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiParserFacade
@@ -21,16 +17,11 @@ import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.elementType
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.actions.errorNotification
-import org.jetbrains.kotlin.idea.KotlinLanguage
-import org.jetbrains.kotlin.idea.scratch.*
-import org.jetbrains.kotlin.idea.scratch.compile.KtCompilingExecutor
+import org.jetbrains.kotlin.idea.scratch.KtScratchFileLanguageProvider
+import org.jetbrains.kotlin.idea.scratch.ScratchExpression
+import org.jetbrains.kotlin.idea.scratch.ScratchFile
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutput
 import org.jetbrains.kotlin.idea.scratch.output.ScratchOutputHandler
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.psiUtil.endOffset
-import org.jetbrains.kotlin.script.jsr223.KotlinJsr223JvmLocalScriptEngineFactory
-import java.io.File
-import javax.script.ScriptEngineManager
 
 class SnippetResultHandler(val project: Project, val doc: Document, val element: PsiElement): ScratchOutputHandler {
     override fun clear(file: ScratchFile) {
