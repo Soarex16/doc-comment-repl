@@ -21,7 +21,7 @@
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
-                                     implementation="org.jetbrains.kotlin.console.ConsoleScriptDefinitionContributor"/>
+                                     implementation="com.github.soarex16.doccommentrepl.repl.console.ConsoleScriptDefinitionContributor"/>
 
     </extensions>
 
