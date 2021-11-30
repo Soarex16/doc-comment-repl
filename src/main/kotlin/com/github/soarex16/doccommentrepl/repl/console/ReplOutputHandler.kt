@@ -12,6 +12,7 @@ import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
 import com.github.soarex16.doccommentrepl.repl.console.actions.logError
+import com.intellij.openapi.command.WriteCommandAction
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType.*
@@ -93,7 +94,8 @@ class ReplOutputHandler(
         outputProcessor.printInitialPrompt(content)
     }
 
-    private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) = InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
+    private fun strToSource(s: String, encoding: Charset = Charsets.UTF_8) =
+        InputSource(ByteArrayInputStream(s.toByteArray(encoding)))
 
     private fun createCompilerMessages(runtimeErrorsReport: String): List<SeverityDetails> {
         val compilerMessages = arrayListOf<SeverityDetails>()

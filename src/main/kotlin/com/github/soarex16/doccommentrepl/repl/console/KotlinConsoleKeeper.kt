@@ -28,6 +28,8 @@ import java.util.concurrent.ConcurrentHashMap
 class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
 
+    var currentRunner : KotlinConsoleRunner? = null
+
     fun getConsoleByVirtualFile(virtualFile: VirtualFile) = consoleMap[virtualFile]
     fun putVirtualFileToConsole(virtualFile: VirtualFile, console: KotlinConsoleRunner) =
         consoleMap.put(virtualFile, console)

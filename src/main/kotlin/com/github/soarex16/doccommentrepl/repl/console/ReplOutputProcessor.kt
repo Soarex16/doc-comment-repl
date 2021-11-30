@@ -99,6 +99,10 @@ class ReplOutputProcessor(
     }
 
     fun printResultWithGutterIcon(result: String) = WriteCommandAction.runWriteCommandAction(project) {
+        WriteCommandAction.runWriteCommandAction(project) {
+            runner.activeDocument?.insertString(runner.offset, "$\nresult\n")
+        }
+
         printOutput(result, ConsoleViewContentType.NORMAL_OUTPUT, ReplIcons.RESULT)
     }
 

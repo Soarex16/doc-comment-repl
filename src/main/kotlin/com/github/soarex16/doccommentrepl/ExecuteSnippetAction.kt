@@ -56,29 +56,26 @@ class ExecuteSnippetAction(val code: String, private val callElement: SmartPsiEl
 
         val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(activeDocFile!!)!!
 
-        val executionResult = "abc"
-
-        val commentString = executionResult.lines().joinToString { "\n//$it" }
-        WriteCommandAction.runWriteCommandAction(project) {
-            activeDocument.insertString(psiElement.textRange.endOffset, "$commentString\n")
-        }
-
-
+//        val executionResult = "abc"
+//
+//        val commentString = executionResult.lines().joinToString { "\n//$it" }
+//        WriteCommandAction.runWriteCommandAction(project) {
+//            activeDocument.insertString(psiElement.textRange.endOffset, "$commentString\n")
+//        }
 
         // надо открыть какой-нибудь файл на котлине
         // потом наверху в панели tools нажать на Run DOC REPL и запуститься консолька
 
-        ProjectTaskManager.getInstance(project).build(module).onSuccess {
-            if (!module.isDisposed) {
-                val keeper = KotlinConsoleKeeper.getInstance(project)
-                val runner = keeper.run(module, previousCompilationFailed = it.hasErrors())
-                sendCommandToProcess(code, runner)
-                //KotlinConsoleKeeper.getInstance(project).getConsoleByVirtualFile()
-            }
+        val keeper = KotlinConsoleKeeper.getInstance(project)
+        val runner: KotlinConsoleRunner
+        if (keeper.currentRunner == null) {
+            runner = keeper.run(module, previousCompilationFailed = false)
+        } else {
+            runner = keeper.currentRunner!!
         }
-        /*val commentElement = createComment(psiElement, executionResult)
-
-        psiElement.parent.addAfter(commentElement, psiElement)*/
+        runner.activeDocument = activeDocument
+        runner.offset = psiElement.textRange.endOffset
+        sendCommandToProcess(code, runner)
     }
 
     private fun sendCommandToProcess(command: String, runner: KotlinConsoleRunner) {

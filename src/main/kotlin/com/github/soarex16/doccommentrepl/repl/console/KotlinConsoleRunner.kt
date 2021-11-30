@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
 import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
 import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
 import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
+import com.intellij.openapi.editor.Document
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo
@@ -82,6 +83,8 @@ class KotlinConsoleRunner(
     path: String?
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
 
+    var activeDocument: Document? = null
+    var offset: Int = 0
     private val replState = ReplState()
     private val consoleTerminated = CountDownLatch(1)
 
@@ -178,6 +181,7 @@ class KotlinConsoleRunner(
         val consoleFile = consoleView.virtualFile
         val keeper = KotlinConsoleKeeper.getInstance(project)
 
+        keeper.currentRunner = this
         keeper.putVirtualFileToConsole(consoleFile, this)
 
         return processHandler

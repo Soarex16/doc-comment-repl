@@ -23,7 +23,6 @@ import com.intellij.openapi.compiler.CompilerManager
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.task.ProjectTaskManager
-import org.jetbrains.kotlin.console.KotlinConsoleKeeper
 
 class ConsoleCompilerHelper(
     private val project: Project,
