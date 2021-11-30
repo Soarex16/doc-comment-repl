@@ -5,6 +5,11 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
+import com.github.soarex16.doccommentrepl.repl.console.actions.BuildAndRestartConsoleAction
+import com.github.soarex16.doccommentrepl.repl.console.actions.KtExecuteCommandAction
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
+import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
 import com.intellij.execution.Executor
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.execution.console.ConsoleExecuteAction
@@ -20,6 +25,7 @@ import com.intellij.openapi.actionSystem.CommonShortcuts
 import com.intellij.openapi.actionSystem.DefaultActionGroup
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.command.WriteCommandAction
+import com.intellij.openapi.editor.Document
 import com.intellij.openapi.editor.colors.EditorColors
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.HighlighterLayer
@@ -31,22 +37,16 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.CharsetToolkit
+import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
+import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.containers.ContainerUtil
 import org.jetbrains.annotations.TestOnly
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
-import com.github.soarex16.doccommentrepl.repl.console.actions.BuildAndRestartConsoleAction
-import com.github.soarex16.doccommentrepl.repl.console.actions.KtExecuteCommandAction
 import org.jetbrains.kotlin.console.gutter.ConsoleGutterContentProvider
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
-import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
-import com.intellij.openapi.editor.Document
-import com.intellij.psi.PsiElement
-import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.descriptors.ScriptDescriptor
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.idea.caches.project.NotUnderContentRootModuleInfo

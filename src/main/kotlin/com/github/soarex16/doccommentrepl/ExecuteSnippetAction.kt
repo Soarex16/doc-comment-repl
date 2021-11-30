@@ -64,6 +64,18 @@ class ExecuteSnippetAction(val code: String, private val callElement: SmartPsiEl
     }
 
     private fun sendCommandToProcess(command: String, runner: KotlinConsoleRunner) {
+        /*
+        *
+        Мне кажется на каждый вызов надо создавать свой virtual file (как в kotlin console runner)
+        * LightVirtualFile(
+                    "${consoleView.virtualFile.name}$lineNumber${KotlinParserDefinition.STD_SCRIPT_EXT}",
+                    KotlinLanguage.INSTANCE, text
+                )
+
+        consoleView.virtualFile.rename(this, consoleView.virtualFile.name + KotlinParserDefinition.STD_SCRIPT_EXT)
+        consoleView.virtualFile.putUserData(KOTLIN_CONSOLE_KEY, true)
+        * */
+
         val processHandler = runner.processHandler
         val processInputOS =
             processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
