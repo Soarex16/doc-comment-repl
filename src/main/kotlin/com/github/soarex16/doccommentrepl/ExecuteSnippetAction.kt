@@ -2,7 +2,6 @@ package com.github.soarex16.doccommentrepl
 
 import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper
 import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
-import com.github.soarex16.doccommentrepl.ui.COMMENT_NODE_TYPES
 import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -10,6 +9,7 @@ import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiParserFacade
 import com.intellij.psi.SmartPsiElementPointer
@@ -25,7 +25,7 @@ class ExecuteSnippetAction(val code: String, private val callElement: SmartPsiEl
     private fun createComment(element: PsiElement, comment: String): PsiElement {
         val psiParser = PsiParserFacade.SERVICE.getInstance(element.project)
 
-        if (element.elementType.toString() !in COMMENT_NODE_TYPES) return psiParser.createWhiteSpaceFromText("")
+        if (element is PsiComment) return psiParser.createWhiteSpaceFromText("")
 
         return psiParser.createLineOrBlockCommentFromText(element.language, comment)
     }

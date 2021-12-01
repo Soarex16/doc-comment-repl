@@ -8,11 +8,17 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>org.jetbrains.kotlin</depends>
     <depends>com.intellij.java</depends>
+<!--    <depends>com.intellij.modules.python</depends>-->
 
     <extensions defaultExtensionNs="com.intellij">
-        <codeInsight.lineMarkerProvider id="DocComment.SampleLineMarkProvider"
-                                        implementationClass="com.github.soarex16.doccommentrepl.ui.ExecuteSnippetLineMarkProvider"
+        <codeInsight.lineMarkerProvider id="DocComment.Kotlin.SampleLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.markers.KotlinSnippetRunnerLineMarkProvider"
                                         language="kotlin"/>
+
+        <codeInsight.lineMarkerProvider id="DocComment.Python.SampleLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.markers.PythonSnippetRunnerLineMarkProvider"
+                                        language="Python"/>
+
         <projectService serviceInterface="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"
                         serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
 
