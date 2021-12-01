@@ -1,7 +1,7 @@
 package com.github.soarex16.doccommentrepl.markers
 
 import com.github.soarex16.doccommentrepl.DocCommentReplBundle
-import com.github.soarex16.doccommentrepl.ExecuteSnippetAction
+import com.github.soarex16.doccommentrepl.actions.ExecuteSnippetAction
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.icons.AllIcons
 import com.intellij.openapi.actionSystem.AnAction

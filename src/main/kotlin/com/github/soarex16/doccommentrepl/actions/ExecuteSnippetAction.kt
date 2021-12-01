@@ -1,5 +1,7 @@
-package com.github.soarex16.doccommentrepl
+package com.github.soarex16.doccommentrepl.actions
 
+import com.github.soarex16.doccommentrepl.errorNotification
+import com.github.soarex16.doccommentrepl.logError
 import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper
 import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
 import com.intellij.execution.process.BaseOSProcessHandler
@@ -13,8 +15,6 @@ import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
-import org.jetbrains.kotlin.console.actions.errorNotification
-import org.jetbrains.kotlin.console.actions.logError
 
 class ExecuteSnippetAction(
     val code: String,
