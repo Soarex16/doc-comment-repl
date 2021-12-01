@@ -1,0 +1,24 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider id="DocComment.Kotlin.SampleLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.markers.KotlinSnippetRunnerLineMarkProvider"
+                                        language="kotlin"/>
+
+        <projectService serviceInterface="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"
+                        serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
+
+    </extensions>
+
+    <extensions defaultExtensionNs="org.jetbrains.kotlin">
+        <scriptDefinitionContributor id="ConsoleScriptDefinitionContributor"
+                                     implementation="com.github.soarex16.doccommentrepl.repl.console.ConsoleScriptDefinitionContributor"/>
+
+    </extensions>
+    <actions>
+        <action id="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
+                class="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
+                text="Reload doc REPL module" description="Test action" icon="AllIcons.Actions.Refresh">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
