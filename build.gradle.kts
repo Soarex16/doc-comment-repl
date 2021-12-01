@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 fun properties(key: String) = project.findProperty(key).toString()
 
+val platformType = properties("platformType")
+
 plugins {
     // Java support
     id("java")
@@ -28,8 +30,16 @@ intellij {
     version.set(properties("platformVersion"))
     type.set(properties("platformType"))
 
-    // Plugin Dependencies. Uses `platformPlugins` property from the gradle.properties file.
-    plugins.set(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+    downloadSources.set(properties("platformDownloadSources").toBoolean())
+
+    val platformPlugins = ArrayList<String>()
+    when (platformType) {
+        "PC" -> platformPlugins.add("python-ce")
+        "PY", "PD" -> platformPlugins.add("python")
+        else -> platformPlugins.add(properties("pythonPlugin"))
+    }
+    platformPlugins.addAll(properties("platformPlugins").split(',').map(String::trim).filter(String::isNotEmpty))
+    plugins.set(platformPlugins)
 }
 
 // Configure Gradle Changelog Plugin - read more: https://github.com/JetBrains/gradle-changelog-plugin

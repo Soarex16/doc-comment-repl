@@ -1,0 +1,19 @@
+<idea-plugin>
+    <extensions defaultExtensionNs="com.intellij">
+        <codeInsight.lineMarkerProvider id="DocComment.Python.SampleLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.markers.PythonSnippetRunnerLineMarkProvider"
+                                        language="Python"/>
+    </extensions>
+
+    <actions>
+        <action id="com.github.soarex16.doccommentrepl.python.ExecutePythonSnippetAction"
+                class="com.github.soarex16.doccommentrepl.python.ExecutePythonSnippetAction"
+                text="Run DOC REPL" description="Test action" icon="AllIcons.RunConfigurations.TestState.Run">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+
+        <action id="PyExecuteSelectionAction" class="PyExecuteSelectionAction" text="Execute selection">
+            <add-to-group group-id="ToolsMenu" anchor="first"/>
+        </action>
+    </actions>
+</idea-plugin>
