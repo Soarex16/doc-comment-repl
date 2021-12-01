@@ -17,7 +17,7 @@
     <actions>
         <action id="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
                 class="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
-                text="Reload doc REPL module" description="Test action" icon="AllIcons.Actions.Refresh">
+                text="Reload Module in Doc REPL" description="Reload current module in Doc REPL Runner" icon="AllIcons.Actions.Refresh">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>
