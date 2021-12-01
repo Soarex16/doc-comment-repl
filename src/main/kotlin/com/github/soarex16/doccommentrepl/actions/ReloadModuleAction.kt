@@ -16,6 +16,5 @@ class ReloadModuleAction : AnAction() {
         ProjectTaskManager.getInstance(project).build(keeper.currentRunner!!.module).onSuccess {
             keeper.currentRunner = keeper.run(keeper.currentRunner!!.module)
         }
-
     }
 }
