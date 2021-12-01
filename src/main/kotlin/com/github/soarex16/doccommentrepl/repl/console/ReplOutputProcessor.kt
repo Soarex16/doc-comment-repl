@@ -101,6 +101,11 @@ class ReplOutputProcessor(
     }
 
     fun printResultWithGutterIcon(result: String) = WriteCommandAction.runWriteCommandAction(project) {
+        printOutput(result, ConsoleViewContentType.NORMAL_OUTPUT, ReplIcons.RESULT)
+        printToDocument(result)
+    }
+
+    fun printToDocument(result: String) {
         WriteCommandAction.runWriteCommandAction(project) {
             val actualCallElement = runner.callElementRef?.element
 
@@ -109,11 +114,9 @@ class ReplOutputProcessor(
                 return@runWriteCommandAction
             }
 
-            val commentString = result.lines().joinToString { "\n//$it" }
-            runner.activeDocument?.insertString(actualCallElement.textRange.endOffset, commentString)
+            val commentString = result.lines().first()
+            runner.activeDocument?.insertString(actualCallElement.textRange.endOffset, "\n//$commentString")
         }
-
-        printOutput(result, ConsoleViewContentType.NORMAL_OUTPUT, ReplIcons.RESULT)
     }
 
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
@@ -156,6 +159,7 @@ class ReplOutputProcessor(
 
     fun printRuntimeError(errorText: String) = WriteCommandAction.runWriteCommandAction(project) {
         printOutput(errorText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
+        printToDocument(errorText)
     }
 
     fun printInternalErrorMessage(internalErrorText: String) = WriteCommandAction.runWriteCommandAction(project) {

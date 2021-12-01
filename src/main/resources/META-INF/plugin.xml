@@ -30,9 +30,9 @@
 
     </extensions>
     <actions>
-        <action id="com.github.soarex16.doccommentrepl.ExecuteSnippetAction"
-                class="com.github.soarex16.doccommentrepl.ExecuteSnippetAction"
-                text="Run DOC REPL" description="Test action" icon="AllIcons.RunConfigurations.TestState.Run">
+        <action id="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
+                class="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
+                text="Reload doc REPL module" description="Test action" icon="AllIcons.Actions.Refresh">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
     </actions>

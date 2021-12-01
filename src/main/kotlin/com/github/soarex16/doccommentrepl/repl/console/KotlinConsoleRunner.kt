@@ -140,7 +140,6 @@ class KotlinConsoleRunner(
         val builder = LanguageConsoleBuilder()
 
         val consoleView = builder.gutterContentProvider(ConsoleGutterContentProvider()).build(project, KotlinLanguage.INSTANCE)
-
         // This rename is needed to parse file in console as script
         consoleView.virtualFile.rename(this, consoleView.virtualFile.name + KotlinParserDefinition.STD_SCRIPT_EXT)
 
@@ -188,6 +187,10 @@ class KotlinConsoleRunner(
         keeper.putVirtualFileToConsole(consoleFile, this)
 
         return processHandler
+    }
+
+    override fun showConsole(defaultExecutor: Executor?, contentDescriptor: RunContentDescriptor) {
+//        super.showConsole(defaultExecutor, contentDescriptor)
     }
 
     override fun createExecuteActionHandler() = object : ProcessBackedConsoleExecuteActionHandler(processHandler, false) {
