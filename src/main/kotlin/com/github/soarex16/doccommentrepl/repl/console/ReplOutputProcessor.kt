@@ -106,17 +106,7 @@ class ReplOutputProcessor(
     }
 
     fun printToDocument(result: String) {
-        WriteCommandAction.runWriteCommandAction(project) {
-            val actualCallElement = runner.callElementRef?.element
-
-            if (actualCallElement == null) {
-                errorNotification(project, DocCommentReplBundle.message("doccodecomment.error.document.modified"))
-                return@runWriteCommandAction
-            }
-
-            val commentString = result.lines().first()
-            runner.activeDocument?.insertString(actualCallElement.textRange.endOffset, "\n//$commentString")
-        }
+        runner.onExecutedCallback(result)
     }
 
     fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {

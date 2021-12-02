@@ -8,6 +8,14 @@ import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 
+data class ExecutionContext(
+        val event: AnActionEvent,
+        val code: String,
+        val project: Project,
+        val module: Module,
+        val onSnippetExecuted: (execResult: String) -> Unit
+)
+
 enum class SnippetLanguage(langId: String) {
     Kotlin("kotlin"),
     Python("Python")
@@ -18,5 +26,5 @@ interface SnippetExecutor {
 
     fun parseSnippet(element: PsiElement): Pair<String, TextRange>?
 
-    fun executeSnippet(event: AnActionEvent, callElement: SmartPsiElementPointer<PsiElement>, code: String, project: Project, module: Module, activeDocument: Document): String?
+    fun executeSnippet(ctx: ExecutionContext): Any
 }

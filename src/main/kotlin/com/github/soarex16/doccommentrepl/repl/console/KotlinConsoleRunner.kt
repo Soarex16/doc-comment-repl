@@ -86,7 +86,7 @@ class KotlinConsoleRunner(
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
 
     var activeDocument: Document? = null
-    var callElementRef: SmartPsiElementPointer<PsiElement>? = null
+    var onExecutedCallback: (execResult: String) -> Unit = { }
     var offset: Int = 0
     private val replState = ReplState()
     private val consoleTerminated = CountDownLatch(1)

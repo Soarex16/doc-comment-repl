@@ -4,6 +4,10 @@
                                         implementationClass="com.github.soarex16.doccommentrepl.markers.KotlinSnippetRunnerLineMarkProvider"
                                         language="kotlin"/>
 
+        <codeInsight.lineMarkerProvider id="DocComment.Kotlin.ProgressLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.markers.ProgressMarkerProvider"
+                                        language="kotlin"/>
+
         <projectService serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
 
     </extensions>

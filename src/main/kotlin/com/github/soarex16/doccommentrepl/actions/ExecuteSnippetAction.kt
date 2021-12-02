@@ -2,12 +2,12 @@ package com.github.soarex16.doccommentrepl.actions
 
 import com.github.soarex16.doccommentrepl.DocCommentReplBundle
 import com.github.soarex16.doccommentrepl.errorNotification
-import com.github.soarex16.doccommentrepl.execution.KotlinExecutor
-import com.github.soarex16.doccommentrepl.execution.PythonExecutor
-import com.github.soarex16.doccommentrepl.execution.SnippetExecutor
-import com.github.soarex16.doccommentrepl.execution.SnippetLanguage
+import com.github.soarex16.doccommentrepl.execution.*
+import com.github.soarex16.doccommentrepl.markers.EXECUTING_MARKER
+import com.github.soarex16.doccommentrepl.markers.SNIPPET_START_MARKER
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
+import com.intellij.openapi.command.WriteCommandAction
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
 import com.intellij.openapi.roots.ProjectRootManager
@@ -41,8 +41,28 @@ class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiEl
         }!!
 
         val (snippetCode, position) = executor.parseSnippet(psiElement) ?: return errorNotification(project, DocCommentReplBundle.message("parse.error"))
-        val executionResult = executor.executeSnippet(event, callElement, snippetCode, project, module, activeDocument) ?: return
 
-        val comment = executor.formatComment(executionResult)
+        val markerPos = snippetCode.indexOf(SNIPPET_START_MARKER) + position.startOffset + 1
+
+        WriteCommandAction.runWriteCommandAction(project) {
+            activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, EXECUTING_MARKER)
+        }
+
+        val ctx = ExecutionContext(event, snippetCode, project, module) { res ->
+            WriteCommandAction.runWriteCommandAction(project) {
+                val actualCallElement = callElement.element
+
+                if (actualCallElement == null) {
+                    org.jetbrains.kotlin.console.actions.errorNotification(project, DocCommentReplBundle.message("doccodecomment.error.document.modified"))
+                    return@runWriteCommandAction
+                }
+
+                val commentString = executor.formatComment(res.trim())
+                activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, SNIPPET_START_MARKER)
+                activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + commentString)
+            }
+        }
+
+        executor.executeSnippet(ctx)
     }
 }

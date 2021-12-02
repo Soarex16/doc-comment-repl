@@ -1,23 +1,21 @@
 package com.github.soarex16.doccommentrepl.execution
 
 import com.github.soarex16.doccommentrepl.logError
+import com.github.soarex16.doccommentrepl.markers.REPL_OUTPUT_MARKER
 import com.github.soarex16.doccommentrepl.markers.parseCodeLines
 import com.github.soarex16.doccommentrepl.markers.tryParseNextEolComments
 import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper
 import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
 import com.intellij.execution.process.BaseOSProcessHandler
-import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.editor.Document
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.util.elementType
+import com.intellij.psi.util.nextLeaf
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 import org.jetbrains.kotlin.lexer.KtTokens
 
 class KotlinExecutor: SnippetExecutor {
-    override fun formatComment(execResult: String) = execResult.lines().joinToString("\n") { "//$it" }
+    override fun formatComment(execResult: String) = execResult.lines().joinToString("\n") { "//$REPL_OUTPUT_MARKER$it" }
 
     /*
         NOTE: не учтен случай, когда в многострочном комментарии (BLOCK_COMMENT, DOC_COMMENT)
@@ -34,27 +32,23 @@ class KotlinExecutor: SnippetExecutor {
         else -> null
     }
 
-
-    override fun executeSnippet(event: AnActionEvent, callElement: SmartPsiElementPointer<PsiElement>, code: String, project: Project, module: Module, activeDocument: Document): String? {
-        val keeper = KotlinConsoleKeeper.getInstance(project)
+    override fun executeSnippet(ctx: ExecutionContext) {
+        val keeper = KotlinConsoleKeeper.getInstance(ctx.project)
         val runner: KotlinConsoleRunner
         if (keeper.currentRunner == null) {
-            runner = keeper.run(module, previousCompilationFailed = false)
+            runner = keeper.run(ctx.module, previousCompilationFailed = false)
         } else {
             runner = keeper.currentRunner!!
         }
-        runner.activeDocument = activeDocument
-        runner.callElementRef = callElement
+        runner.onExecutedCallback = ctx.onSnippetExecuted
 
-        sendCommandToProcess(code, runner)
-
-        return null
+        sendCommandToProcess(ctx.code, runner)
     }
 
     private fun sendCommandToProcess(command: String, runner: KotlinConsoleRunner) {
         val processHandler = runner.processHandler
         val processInputOS =
-                processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
+                processHandler.processInput ?: return this.logError("<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
         val xmlRes = command.replInputAsXml()
