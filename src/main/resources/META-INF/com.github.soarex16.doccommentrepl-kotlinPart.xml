@@ -18,6 +18,7 @@
                 class="com.github.soarex16.doccommentrepl.actions.ReloadModuleAction"
                 text="Reload Module in Doc REPL" description="Reload current module in Doc REPL Runner" icon="AllIcons.Actions.Refresh">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
+            <keyboard-shortcut first-keystroke="shift control x" keymap="$default"/>
         </action>
     </actions>
 </idea-plugin>

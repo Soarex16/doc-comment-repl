@@ -13,7 +13,7 @@ import com.intellij.psi.SmartPointerManager
 /**
  * MarkerInformation for gutter "Execute code snippet" button
  */
-class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElement, val snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
+class ExecuteSnippetMarkerInfo(callElement: PsiElement, snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
         callElement,
         snippetTextRange,
         AllIcons.RunConfigurations.TestState.Run,
@@ -30,7 +30,7 @@ class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElement, val
             override fun getClickAction(): AnAction? {
                 if (callElementRef.element?.isWritable != true) return null
 
-                return ExecuteSnippetAction(snippet, callElementRef, snippetTextRange)
+                return ExecuteSnippetAction(callElementRef)
             }
 
             override fun isNavigateAction() = true

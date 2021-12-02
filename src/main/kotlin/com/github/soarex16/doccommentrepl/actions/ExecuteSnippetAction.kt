@@ -1,32 +1,27 @@
 package com.github.soarex16.doccommentrepl.actions
 
+import com.github.soarex16.doccommentrepl.DocCommentReplBundle
 import com.github.soarex16.doccommentrepl.errorNotification
-import com.github.soarex16.doccommentrepl.logError
-import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper
-import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
-import com.intellij.execution.process.BaseOSProcessHandler
+import com.github.soarex16.doccommentrepl.execution.KotlinExecutor
+import com.github.soarex16.doccommentrepl.execution.PythonExecutor
+import com.github.soarex16.doccommentrepl.execution.SnippetExecutor
+import com.github.soarex16.doccommentrepl.execution.SnippetLanguage
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.actionSystem.CommonDataKeys
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.fileEditor.FileDocumentManager
 import com.intellij.openapi.fileEditor.FileEditorManager
-import com.intellij.openapi.module.Module
-import com.intellij.openapi.project.Project
 import com.intellij.openapi.roots.ProjectRootManager
-import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
-import com.jetbrains.python.actions.PyExecuteInConsole
-import com.jetbrains.python.console.PyExecuteConsoleCustomizer
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
-import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 
-class ExecuteSnippetAction(
-    val code: String,
-    private val callElement: SmartPsiElementPointer<PsiElement>?,
-    val snippetTextRange: TextRange
-) : AnAction() {
+class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiElement>?) : AnAction() {
+    companion object {
+        val EXECUTORS = mapOf<SnippetLanguage, SnippetExecutor>(
+            SnippetLanguage.Kotlin to KotlinExecutor(),
+            SnippetLanguage.Python to PythonExecutor()
+        )
+    }
 
     override fun actionPerformed(event: AnActionEvent) {
         val psiElement = callElement?.element ?: return
@@ -39,44 +34,15 @@ class ExecuteSnippetAction(
 
         val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(activeDocFile!!)!!
 
-        when (psiElement.language.id) {
-            "kotlin" -> executeKotlinSnippet(project, module, activeDocument)
-            "Python" -> executePythonSnippet(event, project, module, activeDocument)
-        }
-    }
+        val executor = when(psiElement.language.id) {
+            "kotlin" -> EXECUTORS[SnippetLanguage.Kotlin]
+            "Python" -> EXECUTORS[SnippetLanguage.Python]
+            else -> return errorNotification(project, DocCommentReplBundle.message("executor.not.found"))
+        }!!
 
-    private fun executePythonSnippet(event: AnActionEvent, project: Project, module: Module, activeDocument: Document) {
-        // TODO: сохранять модули, подтягивать зависимости, спрятать консоль, редиректнуть вывод
+        val (snippetCode, position) = executor.parseSnippet(psiElement) ?: return errorNotification(project, DocCommentReplBundle.message("parse.error"))
+        val executionResult = executor.executeSnippet(event, callElement, snippetCode, project, module, activeDocument) ?: return
 
-        val config = PyExecuteConsoleCustomizer.instance.getContextConfig(event.dataContext)
-        val editor = event.getData(CommonDataKeys.EDITOR)
-        PyExecuteInConsole
-                .executeCodeInConsole(project, code, editor, true, true, false, config)
-    }
-
-    private fun executeKotlinSnippet(project: Project, module: Module, activeDocument: Document) {
-        val keeper = KotlinConsoleKeeper.getInstance(project)
-        val runner: KotlinConsoleRunner
-        if (keeper.currentRunner == null) {
-            runner = keeper.run(module, previousCompilationFailed = false)
-        } else {
-            runner = keeper.currentRunner!!
-        }
-        runner.activeDocument = activeDocument
-        runner.callElementRef = callElement
-        sendCommandToProcess(code, runner)
-    }
-
-    private fun sendCommandToProcess(command: String, runner: KotlinConsoleRunner) {
-        val processHandler = runner.processHandler
-        val processInputOS =
-            processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
-        val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
-
-        val xmlRes = command.replInputAsXml()
-
-        val bytes = ("$xmlRes\n").toByteArray(charset)
-        processInputOS.write(bytes)
-        processInputOS.flush()
+        val comment = executor.formatComment(executionResult)
     }
 }
