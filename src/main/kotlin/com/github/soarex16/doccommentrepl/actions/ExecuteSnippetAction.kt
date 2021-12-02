@@ -19,6 +19,19 @@ import org.jetbrains.kotlin.psi.psiUtil.endOffset
 import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
+val cowsay = """
+  ________________________________________
+/ Да, оно не работает. Да, оно сломалось.  \
+| И что ты мне сделаешь?                   |
+\ Я ведь всего-лишь корова...              /
+  ----------------------------------------
+         \   ^__^ 
+          \  (oo)\_______
+             (__)\       )\/\
+                 ||----w |
+                 ||     ||
+""".trimIndent()
+
 class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiElement>?) : AnAction() {
     companion object {
         val EXECUTORS = mapOf<SnippetLanguage, SnippetExecutor>(
@@ -38,41 +51,66 @@ class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiEl
 
         val module = ProjectRootManager.getInstance(project).fileIndex.getModuleForFile(activeDocFile!!)!!
 
-        val executor = when(psiElement.language.id) {
+        val executor = when (psiElement.language.id) {
             "kotlin" -> EXECUTORS[SnippetLanguage.Kotlin]
             "Python" -> EXECUTORS[SnippetLanguage.Python]
             else -> return errorNotification(project, DocCommentReplBundle.message("executor.not.found"))
         }!!
 
-        val (snippetCode, position) = executor.parseSnippet(psiElement) ?: return errorNotification(project, DocCommentReplBundle.message("parse.error"))
+        val (snippetCode, position) = executor.parseSnippet(psiElement) ?: return errorNotification(
+            project,
+            DocCommentReplBundle.message("parse.error")
+        )
 
         val markerPos = snippetCode.indexOf(SNIPPET_START_MARKER) + position.startOffset + 1
 
-        WriteCommandAction.runWriteCommandAction(project) {
-            activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, EXECUTING_MARKER)
-        }
-
-        val ctx = ExecutionContext(event, snippetCode, project, module) { res ->
+        try {
             WriteCommandAction.runWriteCommandAction(project) {
-                val actualCallElement = callElement.element
+                activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, EXECUTING_MARKER)
+            }
 
-                if (actualCallElement == null) {
-                    org.jetbrains.kotlin.console.actions.errorNotification(project, DocCommentReplBundle.message("doccodecomment.error.document.modified"))
-                    return@runWriteCommandAction
-                }
+            val ctx = ExecutionContext(event, snippetCode, project, module) { res ->
+                WriteCommandAction.runWriteCommandAction(project) {
+                    val actualCallElement = callElement.element
 
-                val commentString = executor.formatComment(res.trim())
-                activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, SNIPPET_START_MARKER)
+                    if (actualCallElement == null) {
+                        org.jetbrains.kotlin.console.actions.errorNotification(
+                            project,
+                            DocCommentReplBundle.message("doccodecomment.error.document.modified")
+                        )
+                        return@runWriteCommandAction
+                    }
 
-                val nextElement = actualCallElement.getNextSiblingIgnoringWhitespace()
-                if (nextElement is PsiElement && nextElement.text.contains(REPL_OUTPUT_MARKER)) {
-                    activeDocument.replaceString(nextElement.startOffset, nextElement.endOffset, commentString)
-                } else {
-                    activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + commentString)
+                    val commentString = executor.formatComment(res.trim())
+
+                    val nextElement = actualCallElement.getNextSiblingIgnoringWhitespace()
+                    if (nextElement is PsiElement && nextElement.text.contains(REPL_OUTPUT_MARKER)) {
+                        activeDocument.replaceString(nextElement.startOffset, nextElement.endOffset, commentString)
+                    } else {
+                        activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + commentString)
+                    }
                 }
             }
-        }
 
-        executor.executeSnippet(ctx)
+            executor.executeSnippet(ctx)
+        } catch (e: Exception) {
+            errorNotification(project, e.localizedMessage)
+
+            val cowsayComment = executor.formatComment(cowsay)
+
+            WriteCommandAction.runWriteCommandAction(project) {
+                val actualCallElement = callElement.element ?: return@runWriteCommandAction
+                val nextElement = actualCallElement.getNextSiblingIgnoringWhitespace()
+                if (nextElement is PsiElement && nextElement.text.contains(REPL_OUTPUT_MARKER)) {
+                    activeDocument.replaceString(nextElement.startOffset, nextElement.endOffset, cowsayComment)
+                } else {
+                    activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + cowsayComment)
+                }
+            }
+        } finally {
+            WriteCommandAction.runWriteCommandAction(project) {
+                activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, SNIPPET_START_MARKER)
+            }
+        }
     }
 }
