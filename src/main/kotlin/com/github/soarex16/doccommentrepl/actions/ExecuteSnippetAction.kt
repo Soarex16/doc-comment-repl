@@ -4,6 +4,7 @@ import com.github.soarex16.doccommentrepl.DocCommentReplBundle
 import com.github.soarex16.doccommentrepl.errorNotification
 import com.github.soarex16.doccommentrepl.execution.*
 import com.github.soarex16.doccommentrepl.markers.EXECUTING_MARKER
+import com.github.soarex16.doccommentrepl.markers.REPL_OUTPUT_MARKER
 import com.github.soarex16.doccommentrepl.markers.SNIPPET_START_MARKER
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.actionSystem.AnActionEvent
@@ -14,6 +15,9 @@ import com.intellij.openapi.roots.ProjectRootManager
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SmartPsiElementPointer
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
+import org.jetbrains.kotlin.psi.psiUtil.endOffset
+import org.jetbrains.kotlin.psi.psiUtil.getNextSiblingIgnoringWhitespace
+import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiElement>?) : AnAction() {
     companion object {
@@ -59,7 +63,13 @@ class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiEl
 
                 val commentString = executor.formatComment(res.trim())
                 activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, SNIPPET_START_MARKER)
-                activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + commentString)
+
+                val nextElement = actualCallElement.getNextSiblingIgnoringWhitespace()
+                if (nextElement is PsiElement && nextElement.text.contains(REPL_OUTPUT_MARKER)) {
+                    activeDocument.replaceString(nextElement.startOffset, nextElement.endOffset, commentString)
+                } else {
+                    activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + commentString)
+                }
             }
         }
 

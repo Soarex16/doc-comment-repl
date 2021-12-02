@@ -18,8 +18,9 @@ import com.jetbrains.python.console.PythonConsoleRunnerFactory
 import com.jetbrains.python.console.pydev.ConsoleCommunication
 import com.jetbrains.python.console.pydev.ConsoleCommunicationListener
 
-class PythonExecutor: SnippetExecutor {
-    override fun formatComment(execResult: String) = execResult.lines().joinToString("\n") { "#$REPL_OUTPUT_MARKER$it" }
+class PythonExecutor : SnippetExecutor {
+    override fun formatComment(execResult: String) =
+        "\"\"\"" + execResult.lines().joinToString("\n") { REPL_OUTPUT_MARKER + it } + "\"\"\""
 
     override fun parseSnippet(element: PsiElement) = when (element.elementType) {
         PyTokenTypes.END_OF_LINE_COMMENT -> tryParseNextEolComments(element)
@@ -30,7 +31,7 @@ class PythonExecutor: SnippetExecutor {
     override fun executeSnippet(ctx: ExecutionContext) {
         val runner: PydevConsoleRunner = PythonConsoleRunnerFactory.getInstance().createConsoleRunner(ctx.project, null)
 
-        runner.addConsoleListener{ view ->
+        runner.addConsoleListener { view ->
             runner.pydevConsoleCommunication.addCommunicationListener(object : ConsoleCommunicationListener {
                 override fun commandExecuted(more: Boolean) {
                     WriteCommandAction.runWriteCommandAction(ctx.project) {
@@ -45,7 +46,7 @@ class PythonExecutor: SnippetExecutor {
                     }
                 }
 
-                override fun inputRequested() { }
+                override fun inputRequested() {}
             })
             val output = null /*view.file.text
             ctx.onSnippetExecuted(output)*/

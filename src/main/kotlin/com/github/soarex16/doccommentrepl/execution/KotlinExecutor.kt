@@ -14,8 +14,9 @@ import com.intellij.psi.util.nextLeaf
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
 import org.jetbrains.kotlin.lexer.KtTokens
 
-class KotlinExecutor: SnippetExecutor {
-    override fun formatComment(execResult: String) = execResult.lines().joinToString("\n") { "//$REPL_OUTPUT_MARKER$it" }
+class KotlinExecutor : SnippetExecutor {
+    override fun formatComment(execResult: String) =
+        "/*" + execResult.lines().joinToString("\n") { REPL_OUTPUT_MARKER + it } + "*/"
 
     /*
         NOTE: не учтен случай, когда в многострочном комментарии (BLOCK_COMMENT, DOC_COMMENT)
@@ -48,7 +49,7 @@ class KotlinExecutor: SnippetExecutor {
     private fun sendCommandToProcess(command: String, runner: KotlinConsoleRunner) {
         val processHandler = runner.processHandler
         val processInputOS =
-                processHandler.processInput ?: return this.logError("<p>Broken process stream</p>")
+            processHandler.processInput ?: return this.logError("<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
         val xmlRes = command.replInputAsXml()
