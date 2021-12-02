@@ -4,8 +4,7 @@
                                         implementationClass="com.github.soarex16.doccommentrepl.markers.KotlinSnippetRunnerLineMarkProvider"
                                         language="kotlin"/>
 
-        <projectService serviceInterface="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"
-                        serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
+        <projectService serviceImplementation="com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleKeeper"/>
 
     </extensions>
 
