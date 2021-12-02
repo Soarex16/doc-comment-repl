@@ -6,12 +6,6 @@
     </extensions>
 
     <actions>
-        <action id="com.github.soarex16.doccommentrepl.python.ExecutePythonSnippetAction"
-                class="com.github.soarex16.doccommentrepl.python.ExecutePythonSnippetAction"
-                text="Run DOC REPL" description="Test action" icon="AllIcons.RunConfigurations.TestState.Run">
-            <add-to-group group-id="ToolsMenu" anchor="first"/>
-        </action>
-
         <!--<action id="PyExecuteSelectionAction" class="PyExecuteSelectionAction" text="Execute selection">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>-->

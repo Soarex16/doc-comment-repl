@@ -46,6 +46,8 @@ class ExecuteSnippetAction(
     }
 
     private fun executePythonSnippet(event: AnActionEvent, project: Project, module: Module, activeDocument: Document) {
+        // TODO: сохранять модули, подтягивать зависимости, спрятать консоль, редиректнуть вывод
+
         val config = PyExecuteConsoleCustomizer.instance.getContextConfig(event.dataContext)
         val editor = event.getData(CommonDataKeys.EDITOR)
         PyExecuteInConsole
