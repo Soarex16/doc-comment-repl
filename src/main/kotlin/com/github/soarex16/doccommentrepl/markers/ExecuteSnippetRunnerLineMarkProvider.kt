@@ -2,7 +2,6 @@ package com.github.soarex16.doccommentrepl.markers
 
 import com.intellij.codeInsight.daemon.LineMarkerInfo
 import com.intellij.codeInsight.daemon.LineMarkerProvider
-import com.intellij.openapi.project.DumbAware
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
@@ -12,7 +11,7 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 /**
  * Абстрактный класс для создания маркеров запуска сниппетов для любого языка
  */
-abstract class ExecuteSnippetRunnerLineMarkProvider: LineMarkerProvider, DumbAware {
+abstract class ExecuteSnippetRunnerLineMarkProvider: LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         if (!isApplicable(element)) return null
 
@@ -73,7 +72,7 @@ fun tryParseNextEolComments(element: PsiElement): Pair<String, TextRange> {
     var endPosition = element.text.length
     var commentElement = element
     while (true) {
-        commentElement = commentElement.nextSibling
+        commentElement = commentElement.nextSibling ?: break
         var spaceSymbols = 0
         while (commentElement is PsiWhiteSpace) {
             spaceSymbols += commentElement.text.length
