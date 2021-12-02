@@ -1,5 +1,5 @@
 <idea-plugin>
-    <!--<extensions defaultExtensionNs="com.intellij">
+    <extensions defaultExtensionNs="com.intellij">
         <codeInsight.lineMarkerProvider id="DocComment.Python.SampleLineMarkProvider"
                                         implementationClass="com.github.soarex16.doccommentrepl.markers.PythonSnippetRunnerLineMarkProvider"
                                         language="Python"/>
@@ -12,8 +12,8 @@
             <add-to-group group-id="ToolsMenu" anchor="first"/>
         </action>
 
-        &lt;!&ndash;<action id="PyExecuteSelectionAction" class="PyExecuteSelectionAction" text="Execute selection">
+        <!--<action id="PyExecuteSelectionAction" class="PyExecuteSelectionAction" text="Execute selection">
             <add-to-group group-id="ToolsMenu" anchor="first"/>
-        </action>&ndash;&gt;
-    </actions>-->
+        </action>-->
+    </actions>
 </idea-plugin>
