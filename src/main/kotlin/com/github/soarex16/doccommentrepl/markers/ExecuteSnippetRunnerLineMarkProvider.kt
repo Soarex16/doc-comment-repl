@@ -72,7 +72,7 @@ fun tryParseNextEolComments(element: PsiElement): Pair<String, TextRange> {
     var endPosition = element.text.length
     var commentElement = element
     while (true) {
-        commentElement = commentElement.nextSibling
+        commentElement = commentElement.nextSibling ?: break
         var spaceSymbols = 0
         while (commentElement is PsiWhiteSpace) {
             spaceSymbols += commentElement.text.length
