@@ -6,6 +6,7 @@ import com.intellij.codeInsight.daemon.LineMarkerProvider
 import com.intellij.openapi.actionSystem.AnAction
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import com.intellij.openapi.util.TextRange
+import com.intellij.psi.PsiComment
 import com.intellij.psi.PsiElement
 import com.intellij.ui.AnimatedIcon
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
@@ -32,6 +33,9 @@ class ProgressMarkerInfo(callElement: PsiElement, snippetTextRange: TextRange) :
 
 class ProgressMarkerProvider: LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
+        // TODO: python  triple quoted strings
+        if (element !is PsiComment) return null
+
         val executingMarkerRelativePosition = element.text.indexOf(EXECUTING_MARKER)
 
         if (executingMarkerRelativePosition == -1) return null
