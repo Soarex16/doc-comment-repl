@@ -12,4 +12,6 @@ fun errorNotification(project: Project?, message: String) {
     Notifications.Bus.notify(Notification(errorTag, errorTitle, message, NotificationType.ERROR), project)
 }
 
-fun logError(cl: Class<*>, message: String, t: Throwable? = null) = with(Logger.getInstance(cl)) { error(message, t) }
+fun Any.logError(message: String, t: Throwable? = null) = with(Logger.getInstance(this.javaClass)) { warn(message, t) }
+
+fun Any.logWarn(message: String, t: Throwable? = null) = with(Logger.getInstance(this.javaClass)) { warn(message, t) }
