@@ -1,11 +1,16 @@
-<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M32.0845 7.94025V4H24.0203V7.9896H16.029V4H7.91553V7.94025H4V36H16.0044V32.0045C16.0058 30.9457 16.4274 29.9308 17.1766 29.1826C17.9258 28.4345 18.9412 28.0143 20 28.0143C21.0588 28.0143 22.0743 28.4345 22.8234 29.1826C23.5726 29.9308 23.9942 30.9457 23.9956 32.0045V36H36V7.94025H32.0845Z"
-          fill="url(#paint0_linear)"/>
-    <defs>
-        <linearGradient id="paint0_linear" x1="2.94192" y1="4.89955" x2="37.7772" y2="39.7345" gradientUnits="userSpaceOnUse">
-            <stop offset="0.15937" stop-color="#3BEA62"/>
-            <stop offset="0.5404" stop-color="#3C99CC"/>
-            <stop offset="0.93739" stop-color="#6B57FF"/>
-        </linearGradient>
-    </defs>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40" height="40" version="1.1" viewBox="0 0 10.583 10.583" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs>
+    <linearGradient id="a" x1=".54882" x2="10.071" y1=".54723" y2="10.032" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#3bea62" offset="0"/>
+      <stop stop-color="#3c99cc" offset=".48235"/>
+      <stop stop-color="#6b57ff" offset="1"/>
+    </linearGradient>
+  </defs>
+  <rect x=".54882" y=".54723" width="9.522" height="9.4847" stroke="url(#a)" stroke-width="1.0583"/>
+  <g transform="scale(.94338 1.06)" fill="#fff" stroke-width=".2496" aria-label="#>">
+    <path d="m2.2975 5.8732 0.17992-1.0054h-0.40217v-0.44979h0.47625l0.16404-0.9525h-0.45508v-0.44979h0.53446l0.17992-1.0054h0.46567l-0.17992 1.0054h0.75142l0.17992-1.0054h0.46567l-0.17992 1.0054h0.40217v0.44979h-0.48154l-0.16404 0.9525h0.46038v0.44979h-0.53975l-0.17463 1.0054h-0.46567l0.17992-1.0054h-0.75671l-0.17463 1.0054zm0.71967-1.4552h0.75142l0.16404-0.9525h-0.75142z"/>
+    <path d="m5.4652 5.5769v-0.60854l1.5346-0.70908q0.10583-0.047625 0.20638-0.079375 0.10583-0.03175 0.16404-0.047625-0.058208-0.010583-0.16404-0.037042-0.10583-0.03175-0.20638-0.079375l-1.5346-0.71438v-0.61913l2.3707 1.1165v0.66146z"/>
+  </g>
+  <path d="m1.8789 8.0766h4.7955" fill="#fff" stroke="#fff" stroke-width=".52917"/>
 </svg>
