@@ -16,9 +16,9 @@
 
 package com.github.soarex16.doccommentrepl.repl.console.gutter
 
+import com.github.soarex16.doccommentrepl.repl.console.SeverityDetails
 import com.intellij.openapi.editor.markup.GutterIconRenderer
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
-import com.github.soarex16.doccommentrepl.repl.console.SeverityDetails
 import org.jetbrains.kotlin.diagnostics.Severity
 
 class ConsoleErrorRenderer(private val messages: List<SeverityDetails>) : GutterIconRenderer() {

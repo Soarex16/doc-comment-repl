@@ -16,13 +16,13 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
 import com.intellij.execution.console.LanguageConsoleImpl
 import com.intellij.openapi.editor.ex.EditorEx
 import com.intellij.openapi.editor.markup.HighlighterLayer
 import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.util.TextRange
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
 
 class HistoryUpdater(private val runner: KotlinConsoleRunner) {
     private val consoleView: LanguageConsoleImpl by lazy { runner.consoleView as LanguageConsoleImpl }

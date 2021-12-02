@@ -15,7 +15,11 @@ import java.awt.event.KeyEvent
 import kotlin.math.max
 import kotlin.math.min
 
-class HistoryKeyListener(private val project: Project, private val consoleEditor: EditorEx, private val history: CommandHistory) :
+class HistoryKeyListener(
+    private val project: Project,
+    private val consoleEditor: EditorEx,
+    private val history: CommandHistory
+) :
     KeyAdapter(), HistoryUpdateListener {
     private var historyPos = 0
     private var prevCaretOffset = -1

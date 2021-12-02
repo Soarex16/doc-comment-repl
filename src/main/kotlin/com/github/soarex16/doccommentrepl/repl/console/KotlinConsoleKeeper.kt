@@ -5,7 +5,6 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
-import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
 import com.intellij.execution.configurations.GeneralCommandLine
 import com.intellij.openapi.components.ServiceManager
 import com.intellij.openapi.diagnostic.Logger
@@ -28,7 +27,7 @@ import java.util.concurrent.ConcurrentHashMap
 class KotlinConsoleKeeper(val project: Project) {
     private val consoleMap: MutableMap<VirtualFile, KotlinConsoleRunner> = ConcurrentHashMap()
 
-    var currentRunner : KotlinConsoleRunner? = null
+    var currentRunner: KotlinConsoleRunner? = null
 
     fun getConsoleByVirtualFile(virtualFile: VirtualFile) = consoleMap[virtualFile]
     fun putVirtualFileToConsole(virtualFile: VirtualFile, console: KotlinConsoleRunner) =
@@ -103,11 +102,11 @@ class KotlinConsoleKeeper(val project: Project) {
                 }
                 TargetPlatformDetector.getPlatform(module).subplatformsOfType<JdkPlatform>()
                     .firstOrNull()?.targetVersion?.let {
-                    with(javaParameters.programParametersList) {
-                        add("-jvm-target")
-                        add(it.description)
+                        with(javaParameters.programParametersList) {
+                            add("-jvm-target")
+                            add(it.description)
+                        }
                     }
-                }
             }
 
             with(javaParameters.programParametersList) {

@@ -14,13 +14,13 @@ import com.intellij.psi.SmartPointerManager
  * MarkerInformation for gutter "Execute code snippet" button
  */
 class ExecuteSnippetMarkerInfo(callElement: PsiElement, snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
-        callElement,
-        snippetTextRange,
-        AllIcons.RunConfigurations.TestState.Run,
-        { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
-        null,
-        GutterIconRenderer.Alignment.RIGHT,
-        { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
+    callElement,
+    snippetTextRange,
+    AllIcons.RunConfigurations.TestState.Run,
+    { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
+    null,
+    GutterIconRenderer.Alignment.RIGHT,
+    { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
 ) {
 
     val callElementRef = SmartPointerManager.getInstance(callElement.project).createSmartPsiElementPointer(callElement)

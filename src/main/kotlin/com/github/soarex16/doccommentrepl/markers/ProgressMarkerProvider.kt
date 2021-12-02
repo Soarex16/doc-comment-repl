@@ -12,13 +12,13 @@ import com.intellij.ui.AnimatedIcon
 import org.jetbrains.kotlin.psi.psiUtil.startOffset
 
 class ProgressMarkerInfo(callElement: PsiElement, snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
-        callElement,
-        snippetTextRange,
-        AnimatedIcon.Default.INSTANCE,
-        { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
-        null,
-        GutterIconRenderer.Alignment.RIGHT,
-        { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
+    callElement,
+    snippetTextRange,
+    AnimatedIcon.Default.INSTANCE,
+    { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
+    null,
+    GutterIconRenderer.Alignment.RIGHT,
+    { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
 ) {
     override fun createGutterRenderer(): GutterIconRenderer {
         return object : LineMarkerGutterIconRenderer<PsiElement>(this) {
@@ -31,7 +31,7 @@ class ProgressMarkerInfo(callElement: PsiElement, snippetTextRange: TextRange) :
     }
 }
 
-class ProgressMarkerProvider: LineMarkerProvider {
+class ProgressMarkerProvider : LineMarkerProvider {
     override fun getLineMarkerInfo(element: PsiElement): LineMarkerInfo<*>? {
         // TODO: python  triple quoted strings
         if (element !is PsiComment) return null

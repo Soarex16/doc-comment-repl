@@ -1,19 +1,17 @@
 package com.github.soarex16.doccommentrepl.execution
 
 import com.intellij.openapi.actionSystem.AnActionEvent
-import com.intellij.openapi.editor.Document
 import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.PsiElement
-import com.intellij.psi.SmartPsiElementPointer
 
 data class ExecutionContext(
-        val event: AnActionEvent,
-        val code: String,
-        val project: Project,
-        val module: Module,
-        val onSnippetExecuted: (execResult: String) -> Unit
+    val event: AnActionEvent,
+    val code: String,
+    val project: Project,
+    val module: Module,
+    val onSnippetExecuted: (execResult: String) -> Unit
 )
 
 enum class SnippetLanguage(langId: String) {

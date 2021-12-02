@@ -13,12 +13,12 @@ import org.jetbrains.kotlin.psi.psiUtil.startOffset
 /**
  * Провайдер маркеров запуска сниппетов кода в Котлине
  */
-class KotlinSnippetRunnerLineMarkProvider : ExecuteSnippetRunnerLineMarkerProvider() {}
+class KotlinSnippetRunnerLineMarkProvider : ExecuteSnippetRunnerLineMarkerProvider()
 
 private val applicablePythonElementTypes = setOf(
-        PyTokenTypes.END_OF_LINE_COMMENT,
-        PyTokenTypes.DOCSTRING,
-        PyTokenTypes.TRIPLE_QUOTED_STRING
+    PyTokenTypes.END_OF_LINE_COMMENT,
+    PyTokenTypes.DOCSTRING,
+    PyTokenTypes.TRIPLE_QUOTED_STRING
 )
 
 /**
@@ -39,7 +39,10 @@ abstract class ExecuteSnippetRunnerLineMarkerProvider : LineMarkerProvider {
 
         val replMarkerRelativeOffset = element.text.indexOf(SNIPPET_START_MARKER)
 
-        return ExecuteSnippetMarkerInfo(element, TextRange.from(element.startOffset + replMarkerRelativeOffset, SNIPPET_START_MARKER.length))
+        return ExecuteSnippetMarkerInfo(
+            element,
+            TextRange.from(element.startOffset + replMarkerRelativeOffset, SNIPPET_START_MARKER.length)
+        )
     }
 
     open fun isApplicable(element: PsiElement): Boolean {
@@ -55,9 +58,9 @@ fun parseCodeLines(element: PsiElement): Pair<String, TextRange> {
     val replMarkerRelativeOffset = element.text.indexOf(SNIPPET_START_MARKER)
 
     val commentLines = commentText
-            .substring(replMarkerRelativeOffset)
-            .replaceFirst(SNIPPET_START_MARKER, MULTILINE_MARKER) // заменяем для единообразия дальнейшей обработки
-            .lines()
+        .substring(replMarkerRelativeOffset)
+        .replaceFirst(SNIPPET_START_MARKER, MULTILINE_MARKER) // заменяем для единообразия дальнейшей обработки
+        .lines()
 
     var endPosition = replMarkerRelativeOffset
     val sb = StringBuilder()
@@ -72,8 +75,8 @@ fun parseCodeLines(element: PsiElement): Pair<String, TextRange> {
     }
 
     val snippetRange = TextRange.from(
-            element.startOffset + replMarkerRelativeOffset,
-            endPosition - replMarkerRelativeOffset
+        element.startOffset + replMarkerRelativeOffset,
+        endPosition - replMarkerRelativeOffset
     )
 
     // TODO: не учитывается случай, когда последняя строка содержит окончание комментария - */
@@ -115,8 +118,8 @@ fun tryParseNextEolComments(element: PsiElement): Pair<String, TextRange> {
     }
 
     val snippetRange = TextRange.from(
-            element.startOffset + replMarkerRelativeOffset,
-            endPosition - replMarkerRelativeOffset
+        element.startOffset + replMarkerRelativeOffset,
+        endPosition - replMarkerRelativeOffset
     )
 
     return Pair(sb.toString(), snippetRange)

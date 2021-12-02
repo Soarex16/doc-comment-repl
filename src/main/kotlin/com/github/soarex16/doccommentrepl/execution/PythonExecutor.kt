@@ -3,12 +3,11 @@ package com.github.soarex16.doccommentrepl.execution
 import com.github.soarex16.doccommentrepl.markers.REPL_OUTPUT_MARKER
 import com.github.soarex16.doccommentrepl.markers.parseCodeLines
 import com.github.soarex16.doccommentrepl.markers.tryParseNextEolComments
-import com.intellij.openapi.actionSystem.CommonDataKeys
 import com.intellij.psi.PsiElement
 import com.intellij.psi.util.elementType
 import com.jetbrains.python.PyTokenTypes
-import com.jetbrains.python.console.*
-import com.jetbrains.python.console.PyExecuteConsoleCustomizer
+import com.jetbrains.python.console.PydevConsoleRunner
+import com.jetbrains.python.console.PythonConsoleRunnerFactory
 import com.jetbrains.python.console.pydev.ConsoleCommunicationListener
 
 class PythonExecutor : SnippetExecutor {
@@ -26,7 +25,7 @@ class PythonExecutor : SnippetExecutor {
             .getInstance()
             .createConsoleRunner(ctx.project, ctx.module)
 
-        runner.addConsoleListener{ view ->
+        runner.addConsoleListener { view ->
             runner.pydevConsoleCommunication.addCommunicationListener(object : ConsoleCommunicationListener {
                 override fun commandExecuted(more: Boolean) {
                     Thread.sleep(1500)
@@ -46,7 +45,7 @@ class PythonExecutor : SnippetExecutor {
                     ctx.onSnippetExecuted(result)
                 }
 
-                override fun inputRequested() { }
+                override fun inputRequested() {}
             })
             runner.consoleView.executeInConsole(ctx.code)
         }
