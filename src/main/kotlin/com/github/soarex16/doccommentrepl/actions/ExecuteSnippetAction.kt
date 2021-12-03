@@ -89,6 +89,8 @@ class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiEl
                     } else {
                         activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + commentString)
                     }
+
+                    activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, SNIPPET_START_MARKER)
                 }
             }
 
@@ -106,9 +108,7 @@ class ExecuteSnippetAction(private val callElement: SmartPsiElementPointer<PsiEl
                 } else {
                     activeDocument.insertString(actualCallElement.textRange.endOffset, "\n" + cowsayComment)
                 }
-            }
-        } finally {
-            WriteCommandAction.runWriteCommandAction(project) {
+
                 activeDocument.replaceString(markerPos, markerPos + SNIPPET_START_MARKER.length, SNIPPET_START_MARKER)
             }
         }
