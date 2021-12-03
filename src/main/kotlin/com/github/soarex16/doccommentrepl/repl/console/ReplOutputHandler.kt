@@ -5,14 +5,13 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
+import com.github.soarex16.doccommentrepl.repl.console.actions.logError
 import com.intellij.execution.process.OSProcessHandler
 import com.intellij.execution.process.ProcessOutputTypes
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.util.TextRange
 import org.jetbrains.kotlin.cli.common.repl.replNormalizeLineBreaks
 import org.jetbrains.kotlin.cli.common.repl.replUnescapeLineBreaks
-import com.github.soarex16.doccommentrepl.repl.console.actions.logError
-import com.intellij.openapi.command.WriteCommandAction
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType
 import org.jetbrains.kotlin.utils.repl.ReplEscapeType.*

@@ -16,7 +16,11 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
-import com.github.soarex16.doccommentrepl.DocCommentReplBundle
+import com.github.soarex16.doccommentrepl.repl.console.actions.logError
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleErrorRenderer
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
+import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
+import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
 import com.intellij.codeInsight.daemon.impl.HighlightInfo
 import com.intellij.codeInsight.daemon.impl.HighlightInfoType
 import com.intellij.execution.console.LanguageConsoleImpl
@@ -31,12 +35,6 @@ import com.intellij.openapi.editor.markup.HighlighterTargetArea
 import com.intellij.openapi.editor.markup.TextAttributes
 import com.intellij.psi.PsiDocumentManager
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
-import com.github.soarex16.doccommentrepl.repl.console.actions.logError
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleErrorRenderer
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ConsoleIndicatorRenderer
-import com.github.soarex16.doccommentrepl.repl.console.gutter.IconWithTooltip
-import com.github.soarex16.doccommentrepl.repl.console.gutter.ReplIcons
-import org.jetbrains.kotlin.console.actions.errorNotification
 import org.jetbrains.kotlin.diagnostics.Severity
 import kotlin.math.max
 
@@ -49,7 +47,11 @@ class ReplOutputProcessor(
     private val historyDocument = historyEditor.document
     private val historyMarkup = historyEditor.markupModel
 
-    private fun printOutput(output: String, contentType: ConsoleViewContentType, iconWithTooltip: IconWithTooltip? = null) {
+    private fun printOutput(
+        output: String,
+        contentType: ConsoleViewContentType,
+        iconWithTooltip: IconWithTooltip? = null
+    ) {
         consoleView.flushDeferredText() // flush before getting offsets to calculate them properly
         val startOffset = historyDocument.textLength
 
@@ -64,19 +66,25 @@ class ReplOutputProcessor(
         ).apply { gutterIconRenderer = ConsoleIndicatorRenderer(iconWithTooltip) }
     }
 
-    private fun printWarningMessage(message: String, isAddHyperlink: Boolean) = WriteCommandAction.runWriteCommandAction(project) {
-        printOutput("\n", ConsoleViewContentType.NORMAL_OUTPUT)
+    private fun printWarningMessage(message: String, isAddHyperlink: Boolean) =
+        WriteCommandAction.runWriteCommandAction(project) {
+            printOutput("\n", ConsoleViewContentType.NORMAL_OUTPUT)
 
-        printOutput(message, ReplColors.WARNING_INFO_CONTENT_TYPE, ReplIcons.BUILD_WARNING_INDICATOR)
+            printOutput(message, ReplColors.WARNING_INFO_CONTENT_TYPE, ReplIcons.BUILD_WARNING_INDICATOR)
 
-        if (isAddHyperlink) {
-            consoleView.printHyperlink(KotlinIdeaReplBundle.message("build.module.0.and.restart1", runner.module.name)) {
-                runner.compilerHelper.compileModule()
+            if (isAddHyperlink) {
+                consoleView.printHyperlink(
+                    KotlinIdeaReplBundle.message(
+                        "build.module.0.and.restart1",
+                        runner.module.name
+                    )
+                ) {
+                    runner.compilerHelper.compileModule()
+                }
             }
-        }
 
-        printOutput("\n\n", ConsoleViewContentType.NORMAL_OUTPUT)
-    }
+            printOutput("\n\n", ConsoleViewContentType.NORMAL_OUTPUT)
+        }
 
     fun printBuildInfoWarningIfNeeded() {
         if (ApplicationManager.getApplication().isUnitTestMode) return
@@ -106,56 +114,48 @@ class ReplOutputProcessor(
     }
 
     fun printToDocument(result: String) {
+        runner.onExecutedCallback(result)
+    }
+
+    fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) =
         WriteCommandAction.runWriteCommandAction(project) {
-            val actualCallElement = runner.callElementRef?.element
-
-            if (actualCallElement == null) {
-                errorNotification(project, DocCommentReplBundle.message("doccodecomment.error.document.modified"))
-                return@runWriteCommandAction
-            }
-
-            val commentString = result.lines().first()
-            runner.activeDocument?.insertString(actualCallElement.textRange.endOffset, "\n//$commentString")
-        }
-    }
-
-    fun highlightCompilerErrors(compilerMessages: List<SeverityDetails>) = WriteCommandAction.runWriteCommandAction(project) {
-        val commandHistory = runner.commandHistory
-        val lastUnprocessedHistoryEntry = commandHistory.lastUnprocessedEntry() ?: return@runWriteCommandAction logError(
-            ReplOutputProcessor::class.java,
-            "Processed more commands than were sent. Sent commands: ${commandHistory.size}. Processed: ${commandHistory.processedEntriesCount}"
-        )
-        val lastCommandStartOffset = lastUnprocessedHistoryEntry.rangeInHistoryDocument.startOffset
-        val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
-        val historyCommandRunIndicator = historyMarkup.allHighlighters.first {
-            historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
-        }
-
-        val highlighterAndMessagesByLine = compilerMessages.filter {
-            it.severity == Severity.ERROR || it.severity == Severity.WARNING
-        }.groupBy { message ->
-            val cmdStart = lastCommandStartOffset + message.range.startOffset
-            historyEditor.document.getLineNumber(cmdStart)
-        }.values.map { messages ->
-            val highlighters = messages.map { message ->
-                val cmdStart = lastCommandStartOffset + message.range.startOffset
-                val cmdEnd = lastCommandStartOffset + max(message.range.endOffset, message.range.startOffset + 1)
-
-                val textAttributes = getAttributesForSeverity(cmdStart, cmdEnd, message.severity)
-                historyMarkup.addRangeHighlighter(
-                    cmdStart, cmdEnd, HighlighterLayer.LAST, textAttributes, HighlighterTargetArea.EXACT_RANGE
+            val commandHistory = runner.commandHistory
+            val lastUnprocessedHistoryEntry =
+                commandHistory.lastUnprocessedEntry() ?: return@runWriteCommandAction logError(
+                    ReplOutputProcessor::class.java,
+                    "Processed more commands than were sent. Sent commands: ${commandHistory.size}. Processed: ${commandHistory.processedEntriesCount}"
                 )
+            val lastCommandStartOffset = lastUnprocessedHistoryEntry.rangeInHistoryDocument.startOffset
+            val lastCommandStartLine = historyDocument.getLineNumber(lastCommandStartOffset)
+            val historyCommandRunIndicator = historyMarkup.allHighlighters.first {
+                historyDocument.getLineNumber(it.startOffset) == lastCommandStartLine && it.gutterIconRenderer != null
             }
-            Pair(highlighters.first(), messages)
-        }
 
-        for ((highlighter, messages) in highlighterAndMessagesByLine) {
-            if (historyDocument.getLineNumber(highlighter.startOffset) == lastCommandStartLine)
-                historyCommandRunIndicator.gutterIconRenderer = ConsoleErrorRenderer(messages)
-            else
-                highlighter.gutterIconRenderer = ConsoleErrorRenderer(messages)
+            val highlighterAndMessagesByLine = compilerMessages.filter {
+                it.severity == Severity.ERROR || it.severity == Severity.WARNING
+            }.groupBy { message ->
+                val cmdStart = lastCommandStartOffset + message.range.startOffset
+                historyEditor.document.getLineNumber(cmdStart)
+            }.values.map { messages ->
+                val highlighters = messages.map { message ->
+                    val cmdStart = lastCommandStartOffset + message.range.startOffset
+                    val cmdEnd = lastCommandStartOffset + max(message.range.endOffset, message.range.startOffset + 1)
+
+                    val textAttributes = getAttributesForSeverity(cmdStart, cmdEnd, message.severity)
+                    historyMarkup.addRangeHighlighter(
+                        cmdStart, cmdEnd, HighlighterLayer.LAST, textAttributes, HighlighterTargetArea.EXACT_RANGE
+                    )
+                }
+                Pair(highlighters.first(), messages)
+            }
+
+            for ((highlighter, messages) in highlighterAndMessagesByLine) {
+                if (historyDocument.getLineNumber(highlighter.startOffset) == lastCommandStartLine)
+                    historyCommandRunIndicator.gutterIconRenderer = ConsoleErrorRenderer(messages)
+                else
+                    highlighter.gutterIconRenderer = ConsoleErrorRenderer(messages)
+            }
         }
-    }
 
     fun printRuntimeError(errorText: String) = WriteCommandAction.runWriteCommandAction(project) {
         printOutput(errorText, ConsoleViewContentType.ERROR_OUTPUT, ReplIcons.RUNTIME_EXCEPTION)
@@ -170,7 +170,13 @@ class ReplOutputProcessor(
 
     private fun getAttributesForSeverity(start: Int, end: Int, severity: Severity): TextAttributes = when (severity) {
         Severity.ERROR ->
-            getAttributesForSeverity(HighlightInfoType.ERROR, HighlightSeverity.ERROR, CodeInsightColors.ERRORS_ATTRIBUTES, start, end)
+            getAttributesForSeverity(
+                HighlightInfoType.ERROR,
+                HighlightSeverity.ERROR,
+                CodeInsightColors.ERRORS_ATTRIBUTES,
+                start,
+                end
+            )
         Severity.WARNING ->
             getAttributesForSeverity(
                 HighlightInfoType.WARNING,
@@ -197,7 +203,8 @@ class ReplOutputProcessor(
         end: Int
     ): TextAttributes {
         val highlightInfo =
-            HighlightInfo.newHighlightInfo(infoType).range(start, end).severity(severity).textAttributes(insightColors).create()
+            HighlightInfo.newHighlightInfo(infoType).range(start, end).severity(severity).textAttributes(insightColors)
+                .create()
 
         val psiFile = PsiDocumentManager.getInstance(project).getPsiFile(consoleView.consoleEditor.document)
         val colorScheme = consoleView.consoleEditor.colorsScheme

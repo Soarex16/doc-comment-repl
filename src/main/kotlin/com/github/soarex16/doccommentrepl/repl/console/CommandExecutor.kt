@@ -16,10 +16,10 @@
 
 package com.github.soarex16.doccommentrepl.repl.console
 
+import com.github.soarex16.doccommentrepl.repl.console.actions.logError
 import com.intellij.execution.process.BaseOSProcessHandler
 import com.intellij.openapi.command.WriteCommandAction
 import org.jetbrains.kotlin.cli.common.repl.replInputAsXml
-import com.github.soarex16.doccommentrepl.repl.console.actions.logError
 
 class CommandExecutor(private val runner: KotlinConsoleRunner) {
     private val commandHistory = runner.commandHistory
@@ -45,7 +45,8 @@ class CommandExecutor(private val runner: KotlinConsoleRunner) {
 
     private fun sendCommandToProcess(command: String) {
         val processHandler = runner.processHandler
-        val processInputOS = processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
+        val processInputOS =
+            processHandler.processInput ?: return logError(this::class.java, "<p>Broken process stream</p>")
         val charset = (processHandler as? BaseOSProcessHandler)?.charset ?: Charsets.UTF_8
 
         val xmlRes = command.replInputAsXml()

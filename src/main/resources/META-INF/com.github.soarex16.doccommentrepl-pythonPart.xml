@@ -3,6 +3,10 @@
         <codeInsight.lineMarkerProvider id="DocComment.Python.SampleLineMarkProvider"
                                         implementationClass="com.github.soarex16.doccommentrepl.markers.PythonSnippetRunnerLineMarkProvider"
                                         language="Python"/>
+
+        <codeInsight.lineMarkerProvider id="DocComment.Python.ProgressLineMarkProvider"
+                                        implementationClass="com.github.soarex16.doccommentrepl.markers.ProgressMarkerProvider"
+                                        language="Python"/>
     </extensions>
 
     <actions>

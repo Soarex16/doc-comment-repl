@@ -37,10 +37,8 @@ import com.intellij.openapi.module.Module
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.util.Disposer
 import com.intellij.openapi.vfs.CharsetToolkit
-import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFileFactory
 import com.intellij.psi.PsiManager
-import com.intellij.psi.SmartPsiElementPointer
 import com.intellij.psi.impl.PsiFileFactoryImpl
 import com.intellij.testFramework.LightVirtualFile
 import com.intellij.util.containers.ContainerUtil
@@ -86,7 +84,7 @@ class KotlinConsoleRunner(
 ) : AbstractConsoleRunnerWithHistory<LanguageConsoleView>(myProject, title, path) {
 
     var activeDocument: Document? = null
-    var callElementRef: SmartPsiElementPointer<PsiElement>? = null
+    var onExecutedCallback: (execResult: String) -> Unit = { }
     var offset: Int = 0
     private val replState = ReplState()
     private val consoleTerminated = CountDownLatch(1)
@@ -118,9 +116,10 @@ class KotlinConsoleRunner(
             field = value
         }
 
-    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) = WriteCommandAction.runWriteCommandAction(project) {
-        consoleEditorHighlighter.gutterIconRenderer = ConsoleIndicatorRenderer(newIconWithTooltip)
-    }
+    fun changeConsoleEditorIndicator(newIconWithTooltip: IconWithTooltip) =
+        WriteCommandAction.runWriteCommandAction(project) {
+            consoleEditorHighlighter.gutterIconRenderer = ConsoleIndicatorRenderer(newIconWithTooltip)
+        }
 
     private var consoleEditorHighlighter by Delegates.notNull<RangeHighlighter>()
     private var disposableDescriptor by Delegates.notNull<RunContentDescriptor>()
@@ -139,7 +138,8 @@ class KotlinConsoleRunner(
     override fun createConsoleView(): LanguageConsoleView? {
         val builder = LanguageConsoleBuilder()
 
-        val consoleView = builder.gutterContentProvider(ConsoleGutterContentProvider()).build(project, KotlinLanguage.INSTANCE)
+        val consoleView =
+            builder.gutterContentProvider(ConsoleGutterContentProvider()).build(project, KotlinLanguage.INSTANCE)
         // This rename is needed to parse file in console as script
         consoleView.virtualFile.rename(this, consoleView.virtualFile.name + KotlinParserDefinition.STD_SCRIPT_EXT)
 
@@ -193,9 +193,10 @@ class KotlinConsoleRunner(
 //        super.showConsole(defaultExecutor, contentDescriptor)
     }
 
-    override fun createExecuteActionHandler() = object : ProcessBackedConsoleExecuteActionHandler(processHandler, false) {
-        override fun runExecuteAction(consoleView: LanguageConsoleView) = executor.executeCommand()
-    }
+    override fun createExecuteActionHandler() =
+        object : ProcessBackedConsoleExecuteActionHandler(processHandler, false) {
+            override fun runExecuteAction(consoleView: LanguageConsoleView) = executor.executeCommand()
+        }
 
     override fun fillToolBarActions(
         toolbarActions: DefaultActionGroup,
@@ -215,9 +216,15 @@ class KotlinConsoleRunner(
     }
 
     override fun createConsoleExecAction(consoleExecuteActionHandler: ProcessBackedConsoleExecuteActionHandler) =
-        ConsoleExecuteAction(consoleView, consoleExecuteActionHandler, KOTLIN_SHELL_EXECUTE_ACTION_ID, consoleExecuteActionHandler)
+        ConsoleExecuteAction(
+            consoleView,
+            consoleExecuteActionHandler,
+            KOTLIN_SHELL_EXECUTE_ACTION_ID,
+            consoleExecuteActionHandler
+        )
 
-    override fun constructConsoleTitle(title: String) = KotlinIdeaReplBundle.message("constructor.title.0.in.module.1", title, module.name)
+    override fun constructConsoleTitle(title: String) =
+        KotlinIdeaReplBundle.message("constructor.title.0.in.module.1", title, module.name)
 
     private fun setupPlaceholder(editor: EditorEx) {
         val executeCommandAction = ActionManager.getInstance().getAction(KOTLIN_SHELL_EXECUTE_ACTION_ID)
@@ -236,7 +243,7 @@ class KotlinConsoleRunner(
         fun configureEditorGutter(editor: EditorEx, color: Color, iconWithTooltip: IconWithTooltip): RangeHighlighter {
             editor.settings.isLineMarkerAreaShown = true // hack to show gutter
             editor.settings.isFoldingOutlineShown = true
-            editor.gutterComponentEx.setPaintBackground(true)
+            editor.gutterComponentEx.isPaintBackground = true
             val editorColorScheme = editor.colorsScheme
             editorColorScheme.setColor(EditorColors.GUTTER_BACKGROUND, color)
             editor.colorsScheme = editorColorScheme
@@ -248,7 +255,8 @@ class KotlinConsoleRunner(
         val consoleEditor = consoleView.consoleEditor
 
         configureEditorGutter(historyEditor, ReplColors.HISTORY_GUTTER_COLOR, ReplIcons.HISTORY_INDICATOR)
-        consoleEditorHighlighter = configureEditorGutter(consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
+        consoleEditorHighlighter =
+            configureEditorGutter(consoleEditor, ReplColors.EDITOR_GUTTER_COLOR, ReplIcons.EDITOR_INDICATOR)
 
         historyEditor.settings.isUseSoftWraps = true
         historyEditor.settings.additionalLinesCount = 0
@@ -295,7 +303,8 @@ class KotlinConsoleRunner(
             replState.submitLine(psiFile)
             configureFileDependencies(psiFile)
             val scriptDescriptor =
-                psiFile.script!!.unsafeResolveToDescriptor() as? ScriptDescriptor ?: error("Failed to analyze line:\n$text")
+                psiFile.script!!.unsafeResolveToDescriptor() as? ScriptDescriptor
+                    ?: error("Failed to analyze line:\n$text")
             ForceResolveUtil.forceResolveAllContents(scriptDescriptor)
             replState.lineSuccess(psiFile, scriptDescriptor)
 
@@ -310,7 +319,8 @@ class KotlinConsoleRunner(
         }
 
     private fun configureFileDependencies(psiFile: KtFile) {
-        psiFile.forcedModuleInfo = module.testSourceInfo() ?: module.productionSourceInfo() ?: NotUnderContentRootModuleInfo
+        psiFile.forcedModuleInfo =
+            module.testSourceInfo() ?: module.productionSourceInfo() ?: NotUnderContentRootModuleInfo
     }
 }
 

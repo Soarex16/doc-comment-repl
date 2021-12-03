@@ -5,6 +5,7 @@
 
 package com.github.soarex16.doccommentrepl.repl.console.actions
 
+import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
 import com.intellij.icons.AllIcons
 import com.intellij.notification.Notification
 import com.intellij.notification.NotificationType
@@ -16,7 +17,6 @@ import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFile
 import org.jetbrains.kotlin.KotlinIdeaReplBundle
 import org.jetbrains.kotlin.console.KotlinConsoleKeeper
-import com.github.soarex16.doccommentrepl.repl.console.KotlinConsoleRunner
 
 fun errorNotification(project: Project?, message: String) {
     val errorTag = "KOTLIN REPL ERROR"
@@ -46,7 +46,7 @@ class KtExecuteCommandAction(private val consoleFile: VirtualFile) : AnAction() 
 class BuildAndRestartConsoleAction(
     private val runner: KotlinConsoleRunner
 ) : AnAction(
-    KotlinIdeaReplBundle.message("build.and.restart"),
+    KotlinIdeaReplBundle.message("title.build.and.restart"),
     KotlinIdeaReplBundle.message("build.module.0.and.restart", runner.module.name),
     AllIcons.Actions.Restart
 ) {

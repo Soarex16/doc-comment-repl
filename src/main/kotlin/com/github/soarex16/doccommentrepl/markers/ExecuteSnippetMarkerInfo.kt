@@ -13,14 +13,14 @@ import com.intellij.psi.SmartPointerManager
 /**
  * MarkerInformation for gutter "Execute code snippet" button
  */
-class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElement, val snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
-        callElement,
-        snippetTextRange,
-        AllIcons.RunConfigurations.TestState.Run,
-        { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
-        null,
-        GutterIconRenderer.Alignment.RIGHT,
-        { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
+class ExecuteSnippetMarkerInfo(callElement: PsiElement, snippetTextRange: TextRange) : LineMarkerInfo<PsiElement>(
+    callElement,
+    snippetTextRange,
+    AllIcons.RunConfigurations.TestState.Run,
+    { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
+    null,
+    GutterIconRenderer.Alignment.RIGHT,
+    { DocCommentReplBundle.message("doccodecomment.tool.tip.text.execute") },
 ) {
 
     val callElementRef = SmartPointerManager.getInstance(callElement.project).createSmartPsiElementPointer(callElement)
@@ -30,7 +30,7 @@ class ExecuteSnippetMarkerInfo(val snippet: String, callElement: PsiElement, val
             override fun getClickAction(): AnAction? {
                 if (callElementRef.element?.isWritable != true) return null
 
-                return ExecuteSnippetAction(snippet, callElementRef, snippetTextRange)
+                return ExecuteSnippetAction(callElementRef)
             }
 
             override fun isNavigateAction() = true

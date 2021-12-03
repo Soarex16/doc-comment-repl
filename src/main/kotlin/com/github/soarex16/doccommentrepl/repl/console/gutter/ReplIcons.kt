@@ -51,8 +51,10 @@ object ReplIcons {
     )
 
     // command result icons
-    val SYSTEM_HELP: IconWithTooltip = IconWithTooltip(AllIcons.Actions.Help, KotlinIdeaReplBundle.message("icon.tool.tip.system.help"))
-    val RESULT: IconWithTooltip = IconWithTooltip(AllIcons.Vcs.Equal, KotlinIdeaReplBundle.message("icon.tool.tip.result"))
+    val SYSTEM_HELP: IconWithTooltip =
+        IconWithTooltip(AllIcons.Actions.Help, KotlinIdeaReplBundle.message("icon.tool.tip.system.help"))
+    val RESULT: IconWithTooltip =
+        IconWithTooltip(AllIcons.Vcs.Equal, KotlinIdeaReplBundle.message("icon.tool.tip.result"))
     val COMPILER_ERROR: Icon = AllIcons.General.Error
     val RUNTIME_EXCEPTION: IconWithTooltip = IconWithTooltip(
         AllIcons.General.BalloonWarning,
